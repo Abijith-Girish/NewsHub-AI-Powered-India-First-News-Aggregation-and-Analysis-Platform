@@ -1,0 +1,65 @@
+NewsHub update: FactCheck, NewsLens and article categorisation
+
+WHAT CHANGED
+
+1) FactCheck
+- Evidence matching is now claim-specific rather than relying on broad shared words.
+- Evidence passages are scored for overlap with the meaningful terms in the submitted claim.
+- Negation and correction cues are considered only in sentences that also mention claim-specific terms.
+- One ordinary publisher report is not enough for a Supported or Contradicted verdict.
+- A relevant supporting/contradicting conflict is classified as Mixed rather than showing a one-sided verdict.
+- Publisher domains and near-identical syndicated copies are considered when counting independent sources.
+- Unrelated candidate stories are filtered from FactCheck evidence.
+- The LLM may explain the rule-based assessment, but it does not decide or override the verdict.
+
+2) NewsLens and TruthTrace
+- Matching uses title terms, article context, named entities, normalized event/action terms and publication-time proximity.
+- Category equality is not used as a same-event signal.
+- Matches need specific event-level overlap; merely sharing a city, institution or broad topic is insufficient.
+- The API exposes shared event terms and a reason for each match.
+- TruthTrace uses the stricter claim matcher and removes stale false-positive links within the currently re-evaluated candidate window.
+
+3) Article categorisation
+- Generic World feed assignments may be refined when multiple high-specificity topic signals identify another category.
+- A broad World feed can no longer mask a strong domestic politics/civic story such as a Supreme Court/BMC matter.
+- Explicit publisher sections and manual/editor overrides are preserved.
+- The reclassify_articles management command applies the same resolver to already stored articles.
+
+INSTALLATION (Windows / PowerShell)
+
+1. Stop Django with Ctrl+C.
+2. Back up the existing SQLite database and the files listed below.
+3. Extract this ZIP and copy its backend folder into:
+   E:\NewsHub-India-Enhanced\NewsHub-main\
+4. Merge folders and replace the matching files.
+5. Do NOT replace backend/.env, backend/.venv, the SQLite database, or frontend files.
+6. Activate the existing virtual environment and run:
+
+   python manage.py check
+   python manage.py test news.tests.test_factcheck news.tests.test_story_matching news.tests.test_categorization
+
+7. If those checks pass, optionally re-evaluate existing stored article categories:
+
+   python manage.py reclassify_articles --limit 2500
+
+8. Restart Django:
+
+   python manage.py runserver 127.0.0.1:8000
+
+No database migration is required for these changes.
+
+FILES IN THIS PATCH
+- backend/news/services/factcheck.py
+- backend/news/ml/story_matching.py
+- backend/news/services/categorization.py
+- backend/news/management/commands/reclassify_articles.py
+- backend/news/features_views.py
+- backend/news/ai_views.py
+- backend/news/tests/test_factcheck.py
+- backend/news/tests/test_story_matching.py (new)
+- backend/news/tests/test_categorization.py (new)
+
+VERIFICATION LIMITATIONS
+Python syntax compilation and targeted helper-level smoke checks passed during preparation. The full Django test suite and browser/API integration tests were not run in this build environment because Django/DRF are not installed here and package downloads are unavailable. Run the commands above in your existing local virtual environment before relying on the changes.
+
+FactCheck is an automated evidence-assessment aid, not a definitive fact-checking service. Search coverage, publisher access, source independence and language heuristics remain limitations. Mixed and Insufficient evidence are intentional conservative outcomes.

@@ -1,0 +1,106 @@
+NewsHub Article Extraction Engine - Installation Guide
+=====================================================
+
+This update adds safe, on-demand extraction of publicly accessible publisher
+article text. It preserves the existing Gemini -> Groq AI provider order and
+Sarvam translation integration.
+
+IMPORTANT
+---------
+- Stop the Django development server before copying files.
+- Back up your project folder or the files listed below first.
+- Merge the backend/ and frontend/ folders into your existing NewsHub-main
+  folder and allow matching source files to be replaced.
+- Do NOT replace backend/.env, your SQLite database, backend/.venv, or any
+  locally generated secrets or data.
+- No database migration is required.
+
+FILES ADDED / UPDATED
+---------------------
+New:
+  backend/news/services/article_extraction.py
+  backend/news/tests/test_article_extraction.py
+
+Updated backend:
+  backend/config/settings.py
+  backend/.env.example
+  backend/requirements.txt
+  backend/news/features_views.py
+  backend/news/ml/summarizer.py
+  backend/news/tests/test_feature_views.py
+  backend/news/tests/test_ml.py
+  backend/news/urls.py
+  backend/news/services/llm.py (removes a duplicate unreachable return)
+
+Updated frontend:
+  frontend/src/components/SummaryPanel.jsx
+  frontend/src/lib/api.js
+  frontend/src/pages/ArticlePage.jsx
+
+INSTALL
+-------
+From PowerShell, in the existing backend folder with its virtual environment
+activated, install the optional preferred extraction library:
+
+  pip install "trafilatura>=2.3,<3"
+
+Trafilatura is used when available. A BeautifulSoup-based fallback remains in
+the code, so the application can still run if Trafilatura cannot be installed.
+
+Ensure these values exist in backend/.env (do not replace existing keys):
+
+  ARTICLE_EXTRACTION_ENABLED=true
+  ARTICLE_EXTRACTION_RESPECT_ROBOTS=true
+  ARTICLE_EXTRACTION_TIMEOUT=9
+  ARTICLE_EXTRACTION_MAX_BYTES=3145728
+  ARTICLE_EXTRACTION_CACHE_TTL=21600
+  ARTICLE_EXTRACTION_FAILURE_TTL=600
+
+Keep the existing GEMINI_API_KEY, GROQ_API_KEY, and SARVAM_API_KEY values.
+Keep NEWS_ENABLE_LIVE_FETCH as it is in your existing .env; article page
+extraction is separate from scheduled/live feed ingestion.
+
+RESTART AND CHECK
+-----------------
+  python manage.py check
+  python manage.py test news.tests.test_article_extraction
+  python manage.py test news.tests.test_feature_views news.tests.test_ml
+  python manage.py runserver 127.0.0.1:8000
+
+The React dev server can remain running; Vite should hot-reload frontend files.
+If it does not, restart it with npm run dev in the frontend folder.
+
+HOW IT WORKS
+------------
+- When an article has no substantial body in its feed, NewsHub can fetch its
+  stored publisher URL on demand.
+- It checks robots.txt, accepts only public HTTP/HTTPS destinations, validates
+  redirects, limits response size and time, and avoids private/local addresses.
+- It tries Trafilatura and then structured metadata / BeautifulSoup extraction.
+- It removes repeated text and common newsletter/navigation boilerplate.
+- Extracted text is cached temporarily; it is not saved permanently into the
+  Article database record.
+- Full (>=120 words), partial (45-119 words), and headline-only (<45 words)
+  statuses are reported to the UI/API.
+- AI summarization uses Gemini first and Groq as fallback only when enough
+  readable article body text is available. Short snippets are not presented
+  as full-article AI summaries.
+- Sarvam remains the preferred Indian-language translation provider. Its
+  translation request uses the same best-available extracted text and reports
+  when the source content is partial.
+
+PUBLISHER LIMITATIONS
+---------------------
+The extraction engine does not bypass paywalls, login requirements, CAPTCHAs,
+robots.txt restrictions, or publisher blocks. A publisher may provide only a
+headline/description or may reject automated retrieval. In those cases NewsHub
+keeps the feed text, shows an explicit limitation, and links to the original
+article. This is expected safe behaviour, not an application crash.
+
+TESTING NOTE
+------------
+Source compilation, frontend syntax parsing, and local mocked extraction
+checks passed while preparing this package. Full Django tests, live publisher
+retrieval, and live Gemini/Groq/Sarvam requests must still be verified in your
+local environment because external dependencies and provider credentials are
+not available in the package-build environment.

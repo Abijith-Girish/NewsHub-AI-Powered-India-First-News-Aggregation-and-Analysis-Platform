@@ -1,0 +1,10 @@
+NewsHub – Three targeted improvements
+
+- FactCheck: claim-specific evidence relevance, contextual negation handling, independent-publisher counting, syndicated-copy discounting, Mixed verdict for relevant conflicts, and stricter insufficient-evidence behaviour.
+- NewsLens: same-event matching based on event terms, title/context similarity, entities and time proximity; category equality alone is excluded.
+- TruthTrace: stricter claim-to-article matching and stale false-positive cleanup within the evaluated window.
+- Categorisation: generic World feed articles can be refined using high-specificity topic rules; manual/editor overrides and explicit publisher sections are preserved.
+- Added regression tests for FactCheck, NewsLens/TruthTrace matching and categorisation.
+
+No schema migration is required.
+See FACTCHECK-NEWSLENS-CATEGORY-UPDATE.txt for installation and test commands.

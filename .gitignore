@@ -1,0 +1,72 @@
+# ============================================================
+# Environment variables and secrets
+# Ignore all local environment files, but keep example templates
+# ============================================================
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# ============================================================
+# Python / Django
+# ============================================================
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+ENV/
+
+# Local databases and journals
+*.sqlite3
+*.sqlite3-journal
+*.db
+
+# Django generated files and user-uploaded local media
+backend/media/
+backend/staticfiles/
+staticfiles/
+
+# Test, type-checker and lint caches
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Runtime logs
+logs/
+*.log
+
+# ============================================================
+# Trained model artifacts (regenerate with train_classifier)
+# Keep the directory placeholder
+# ============================================================
+backend/news/ml/artifacts/*
+!backend/news/ml/artifacts/.gitkeep
+
+# ============================================================
+# Node / React / Vite
+# ============================================================
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# ============================================================
+# IDE and operating-system files
+# ============================================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ============================================================
+# Local archives and generated distributables
+# ============================================================
+*.zip
+NewsHub.zip
