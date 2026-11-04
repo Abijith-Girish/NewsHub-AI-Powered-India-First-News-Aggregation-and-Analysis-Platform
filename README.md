@@ -676,3 +676,47 @@ npm run build
 ```
 
 Do not treat a successful archive creation as a substitute for staging tests with real news-provider connectivity and configured production secrets.
+
+---
+
+# Application Screenshots
+
+Explore the major features of NewsHub through the screenshots below.
+
+## Homepage and News Aggregation
+
+![NewsHub Homepage](docs/screenshots/homepage.png)
+
+![Latest News](docs/screenshots/homepage-latest-news.png)
+
+![Categories](docs/screenshots/categories.png)
+
+## Article Reading and AI Summarization
+
+![Article Reader](docs/screenshots/article-reader.png)
+
+![AI Article Summarization](docs/screenshots/ai-summarization.png)
+
+![Detailed AI Summarization](docs/screenshots/detailed-summarization.png)
+
+## Multilingual News
+
+![Multilingual Translation](docs/screenshots/translation-malayalam.png)
+
+![Translation Options](docs/screenshots/translation-options.png)
+
+## AI-Powered Unique Features
+
+![NewsLens - Multi-Source Perspective Analyzer](docs/screenshots/newslens.png)
+
+![TruthTrace - Claim Evolution Timeline](docs/screenshots/truthtrace.png)
+
+![FactCheck - Evidence-Based Verification](docs/screenshots/factcheck.png)
+
+## Personalization and Insights
+
+![AI Daily Briefing](docs/screenshots/daily-briefing.png)
+
+![Advanced Search](docs/screenshots/advanced-search.png)
+
+![Reading Analytics](docs/screenshots/reading-analytics.png)
